@@ -1,0 +1,11 @@
+{
+  "batch_id": "实际日期_测验名称",
+  "students": [
+    {
+      "name": "示例学生",
+      "training": "交付PDF/示例学生/示例学生_学生训练.pdf",
+      "student_solutions": "交付PDF/示例学生/示例学生_训练解析.pdf",
+      "feedback": "反馈文字/示例学生_学习反馈.txt"
+    }
+  ]
+}

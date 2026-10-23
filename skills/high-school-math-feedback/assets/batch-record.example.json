@@ -1,0 +1,24 @@
+{
+  "batch_id": "实际日期_测验名称",
+  "class_name": "实际班级",
+  "grade": "实际年级",
+  "chapter": "本批章节",
+  "exam_date": null,
+  "students": [
+    {
+      "name": "示例学生",
+      "identity_evidence": "材料文件名与卷面姓名的对应依据",
+      "evidence": [{"source_file": "原始材料/答题卡.pdf", "page": 1, "question": "原题号", "observed": "原答中实际可见的步骤", "first_deviation": "首次偏离的具体位置", "teacher_mark": "原批改", "hypothesis": "待验证解释", "certainty": "待确认"}],
+      "targets": [{"id": "G1", "description": "一个可检验的目标", "pass_criterion": "复测中须独立出现的关键步骤"}],
+      "training_ids": [],
+      "retest_ids": [],
+      "estimated_student_minutes": null,
+      "feedback": "针对真实作答撰写的反馈正文",
+      "retest": {"status": "待复测", "due_date": null, "submitted_at": null, "independence_evidence": null, "step_evidence": [], "next_action": "待约定并核对完整作答"}
+    }
+  ],
+  "question_bank": [],
+  "sources": [],
+  "checks": {"math_report": null, "pdf_report": null, "visual_review": null},
+  "outputs": []
+}

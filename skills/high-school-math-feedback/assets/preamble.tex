@@ -1,0 +1,21 @@
+% Copy into a trusted batch project and use with XeLaTeX.
+\documentclass[UTF8,fontset=none,12pt,a4paper]{ctexart}
+\usepackage[left=19mm,right=19mm,top=23mm,bottom=20mm,headheight=16pt,headsep=6mm]{geometry}
+\usepackage{fontspec}
+\IfFontExistsTF{SimSun}{\setCJKmainfont{SimSun}[AutoFakeBold=2]}{\setCJKmainfont{FandolSong-Regular}[BoldFont=FandolSong-Bold]}
+\IfFontExistsTF{Microsoft YaHei}{\setCJKsansfont{Microsoft YaHei}}{\setCJKsansfont{FandolHei-Regular}[BoldFont=FandolHei-Bold]}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\usepackage{amsmath,amssymb,array,graphicx,fancyhdr,needspace}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\linespread{1.12}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small 理学优课高中部}
+\fancyhead[R]{\small 针对补充训练}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\newcommand{\doctitle}[2]{\begin{center}{\Large\sffamily\bfseries #1}\par\vspace{2mm}姓名：#2\end{center}}
+\newcommand{\parttitle}[1]{\par\Needspace{5\baselineskip}\vspace{2mm}{\large\sffamily\bfseries #1}\par}
+\newcommand{\question}[2]{\par\Needspace{4\baselineskip}\textbf{#1.}\quad #2\par}
+\newcommand{\workarea}[1]{\par\vspace*{#1}\par}

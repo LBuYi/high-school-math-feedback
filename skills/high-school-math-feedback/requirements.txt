@@ -1,0 +1,3 @@
+# Tested baseline for exact mathematics, PDF inspection and packaging.
+sympy==1.14.0
+pypdf==6.21.2

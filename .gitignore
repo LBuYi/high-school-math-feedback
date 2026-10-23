@@ -1,0 +1,40 @@
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+.codex/
+.agents/
+.aws/
+
+# Python and editor files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Student materials and generated artifacts belong outside this repository
+data/
+inputs/
+outputs/
+build*/
+tmp/
+学生资料/
+学生错题收集/
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.zip
+*.docx
+*.xlsx
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk

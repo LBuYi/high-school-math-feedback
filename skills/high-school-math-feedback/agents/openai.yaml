@@ -1,0 +1,4 @@
+interface:
+  display_name: "高中数学错题反馈与针对训练"
+  short_description: "从真实错题诊断到组卷网参考、规范解析、复测与学生资料打包"
+  default_prompt: "使用 $high-school-math-feedback，根据这些学生的原题、作答和批改，整理错因、反馈、针对训练与独立复测，参考组卷网并核验，分别导出学生练习、学生解析和教师答案。"
