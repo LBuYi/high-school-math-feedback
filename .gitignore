@@ -30,6 +30,7 @@ tmp/
 *.jpeg
 *.webp
 *.zip
+!downloads/high-school-math-feedback-v*.zip
 *.docx
 *.xlsx
 *.aux

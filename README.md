@@ -6,6 +6,12 @@
 
 ## 安装
 
+**其他 AI 工具的使用者，从这里开始：**
+
+- [下载单技能 ZIP（v1.1.0）](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.1.0.zip)：适合 Claude 上传，或解压后安装到其他工具。
+- [其他 AI 工具的安装与操作流程](docs/USAGE-OTHER-AI.md)：包含 Claude、Claude Code、Cursor、Gemini CLI，以及无 Skills 入口的备用用法。
+- [下载完整仓库](https://github.com/LBuYi/high-school-math-feedback/archive/refs/heads/main.zip)：包含说明、源码和下载包。完整仓库 ZIP 多了一层目录，不要直接当作单技能包上传。
+
 在带有 `skill-installer` 的 Codex 对话中输入：
 
 ```text
@@ -14,7 +20,7 @@ $skill-installer 请安装 https://github.com/LBuYi/high-school-math-feedback/tr
 
 已有同名技能时，先备份个人修改，再让工具处理更新。如果安装后没有出现技能，重新开启对话或重启工具。安装机制可参考 [OpenAI 技能文档](https://learn.chatgpt.com/docs/build-skills)。
 
-其他支持 `SKILL.md` 的 AI 工具，可以按照该工具的说明导入整个 `skills/high-school-math-feedback` 目录。尚未逐一验证其他工具的兼容性；网页访问、命令执行和文件导出能力需要实际检查。
+其他工具的安装步骤已根据官方文档核对，见[操作指南](docs/USAGE-OTHER-AI.md)。尚未在这些客户端逐一完成端到端实测；导入成功后仍需检查网页访问、命令执行和文件导出能力。
 
 ## 第一次使用
 
