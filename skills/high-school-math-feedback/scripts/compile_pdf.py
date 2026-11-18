@@ -7,6 +7,7 @@ import subprocess
 from pathlib import Path
 
 from pypdf import PdfReader
+from pypdf.generic import DictionaryObject
 
 
 def executable(value):
@@ -26,6 +27,58 @@ def run_logged(command, cwd, log_path):
         raise RuntimeError(f"Command failed ({result.returncode}); inspect {log_path}")
 
 
+def inspect_font_resources(resources, visited):
+    """Yield font names and embedding status, including within imported PDF forms."""
+    resources = resources.get_object()
+    if id(resources) in visited:
+        return
+    visited.add(id(resources))
+    fonts = resources.get("/Font", DictionaryObject()).get_object()
+    for tag, reference in fonts.items():
+        font = reference.get_object()
+        name = str(font.get("/BaseFont", tag))
+        if font.get("/Subtype") == "/Type3":
+            yield name, bool(font.get("/CharProcs"))
+            continue
+        descendant_fonts = font.get("/DescendantFonts")
+        if descendant_fonts:
+            font = descendant_fonts.get_object()[0].get_object()
+        descriptor = font.get("/FontDescriptor")
+        embedded = descriptor is not None and any(
+            key in descriptor.get_object() for key in ("/FontFile", "/FontFile2", "/FontFile3")
+        )
+        yield name, embedded
+    xobjects = resources.get("/XObject", DictionaryObject()).get_object()
+    for reference in xobjects.values():
+        form = reference.get_object()
+        if form.get("/Subtype") == "/Form" and "/Resources" in form:
+            yield from inspect_font_resources(form["/Resources"], visited)
+
+
+def inspect_print_layout(reader, expect_a4=False):
+    """Check effective page dimensions and the fonts referenced by page/form resources."""
+    a4_width = 210 * 72 / 25.4
+    a4_height = 297 * 72 / 25.4
+    sizes = []
+    fonts = {}
+    issues = []
+    for index, page in enumerate(reader.pages, 1):
+        # The visible box and rotation determine the layout a reader displays.
+        box = page.cropbox
+        width = float(box.width) * page.user_unit
+        height = float(box.height) * page.user_unit
+        if page.rotation % 180:
+            width, height = height, width
+        sizes.append([round(width, 2), round(height, 2)])
+        if expect_a4 and (abs(width - a4_width) > 1 or abs(height - a4_height) > 1):
+            issues.append(f"Page {index}: expected A4 portrait, found {width:.2f} x {height:.2f} pt")
+        if "/Resources" in page:
+            for name, embedded in inspect_font_resources(page["/Resources"], set()):
+                fonts[name] = fonts.get(name, True) and embedded
+    issues.extend(f"Font not embedded: {name}" for name in sorted(fonts) if not fonts[name])
+    return {"visible_page_sizes_pt": sizes, "font_resources": dict(sorted(fonts.items()))}, issues
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("tex", type=Path)
@@ -33,6 +86,7 @@ def main():
     parser.add_argument("--kind", required=True, choices=["training", "student_solutions", "retest", "teacher"])
     parser.add_argument("--student", required=True)
     parser.add_argument("--expected-pages", type=int)
+    parser.add_argument("--expect-a4", action="store_true", help="require a portrait A4 visible page on every page")
     parser.add_argument("--engine", default="xelatex")
     parser.add_argument("--renderer", default="pdftoppm")
     parser.add_argument("--header-left", default="理学优课高中部")
@@ -68,6 +122,8 @@ def main():
         if not pages:
             raise RuntimeError("PDF has no pages")
         report.update({"pdf": str(pdf), "page_count": len(pages)})
+        report["print_layout"], layout_issues = inspect_print_layout(reader, args.expect_a4)
+        report["issues"].extend(layout_issues)
         if args.expected_pages is not None and len(pages) != args.expected_pages:
             report["issues"].append(f"Expected {args.expected_pages} pages, found {len(pages)}")
         for index, page in enumerate(pages, 1):

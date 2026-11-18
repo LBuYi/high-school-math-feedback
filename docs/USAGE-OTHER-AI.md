@@ -4,7 +4,7 @@
 
 ## 1. 下载技能
 
-点击 **[下载单技能 ZIP：high-school-math-feedback-v1.1.0.zip](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.1.0.zip)**。
+点击 **[下载单技能 ZIP：high-school-math-feedback-v1.4.12.zip](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.4.12.zip)**。
 
 如果浏览器只显示或预览文件，请使用保存/下载功能，保留 `.zip` 后缀。也可以打开[下载目录](../downloads)，选择 ZIP 后点下载原始文件。不要把网页另存为 HTML 再改成 ZIP。
 
@@ -24,6 +24,16 @@ high-school-math-feedback/
 需要解压安装时，复制整个 `high-school-math-feedback` 文件夹，不能只复制 `SKILL.md`。保留原来的文件名和层级。校验值在 [SHA256SUMS.txt](../downloads/SHA256SUMS.txt)。
 
 ## 2. 选择自己的工具
+
+### Codex
+
+在目标项目开一个新对话，把下面这行发给 AI。
+
+~~~text
+$skill-installer 请从 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/high-school-math-feedback 安装 high-school-math-feedback v1.4.12 到当前项目的 .agents/skills/，安装后检查 SKILL.md 中的版本。
+~~~
+
+手动安装时，把解压后的整个技能目录放进目标项目的 `.agents/skills/`。 [Codex 技能目录](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)
 
 ### Claude 网页端／有 Skills 入口的客户端
 
@@ -114,7 +124,7 @@ gemini skills list --all
 页眉左侧：【学校／机构名称】；右侧：针对补充训练。
 
 请根据真实作答找出主要问题，不预设学生一定粗心或基础差。
-反馈直接写给学生，像老师平时说话，具体指出问题，说明课下怎么做，适度督促。
+默认以老师发给家长的口吻写，孩子也能读懂。具体说清问题、原因和课下怎么练。
 新增题目先参考能实际核读的组卷网近期题或经典题，记录来源和适配理由。
 题量按训练目标和负荷安排，不固定十题。题目前提供必要知识和解题切入点，标题简洁。
 用高中规范步骤写详细解析；用 SymPy 核验适用结论，必要时配数学图。

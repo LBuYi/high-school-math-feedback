@@ -1,4 +1,4 @@
-"""Create a verified student-only ZIP from explicit local paths, without overwriting files."""
+"""Package reviewed materials for teacher handoff or one student's initial assignment."""
 import argparse
 import hashlib
 import io
@@ -45,7 +45,11 @@ def read_source(root, value, extension):
     return payload
 
 
-def package(manifest_path, output, include_retest=False):
+def package(manifest_path, output, include_retest=False, *, assignment_for=None):
+    if assignment_for is not None:
+        assignment_for = checked_name(assignment_for)
+        if include_retest:
+            raise ValueError("Package the retest separately from the initial assignment.")
     manifest_path, output = Path(manifest_path).resolve(), Path(output).resolve()
     if output.exists():
         raise FileExistsError(f"Output already exists: {output}")
@@ -56,7 +60,11 @@ def package(manifest_path, output, include_retest=False):
     if not isinstance(students, list) or not students:
         raise ValueError("Manifest needs a nonempty students array")
     root, names, entries = manifest_path.parent, set(), {}
-    kinds = ["training", "student_solutions", "feedback"] + (["retest"] if include_retest else [])
+    kinds = ["training", "student_solutions", "feedback"]
+    if assignment_for is not None:
+        kinds = ["training"]
+    elif include_retest:
+        kinds.append("retest")
     for student in students:
         if not isinstance(student, dict):
             raise ValueError("Each student must be an object")
@@ -67,12 +75,16 @@ def package(manifest_path, output, include_retest=False):
         if name.casefold() in names:
             raise ValueError(f"Duplicate student name: {name}")
         names.add(name.casefold())
+        if assignment_for is not None and name != assignment_for:
+            continue
         for kind in kinds:
             if kind not in student:
                 raise ValueError(f"{name}: missing {kind}")
             suffix = SUFFIXES[kind]
             entry = f"{name}/{name}_{suffix}"
             entries[entry] = read_source(root, student[kind], Path(suffix).suffix)
+    if not entries:
+        raise ValueError(f"Student not found in the manifest: {assignment_for!r}")
     output.parent.mkdir(parents=True, exist_ok=True)
     created = False
     try:
@@ -92,15 +104,21 @@ def package(manifest_path, output, include_retest=False):
         if created:
             output.unlink(missing_ok=True)
         raise
-    return {"archive": str(output), "students": len(students), "files": len(entries),
-            "include_retest": include_retest, "bytes": output.stat().st_size,
-            "sha256": hashlib.sha256(output.read_bytes()).hexdigest(), "integrity": "passed"}
+    report = {"archive": str(output), "students": 1 if assignment_for is not None else len(students),
+              "files": len(entries), "include_retest": include_retest, "bytes": output.stat().st_size,
+              "sha256": hashlib.sha256(output.read_bytes()).hexdigest(), "integrity": "passed"}
+    if assignment_for is not None:
+        report["assignment_for"] = assignment_for
+    return report
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--include-retest", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--include-retest", action="store_true")
+    mode.add_argument("--assignment-for", metavar="STUDENT", help="Pack only this student's training PDF.")
     args = parser.parse_args()
-    print(json.dumps(package(args.manifest, args.output, args.include_retest), ensure_ascii=False, indent=2))
+    report = package(args.manifest, args.output, args.include_retest, assignment_for=args.assignment_for)
+    print(json.dumps(report, ensure_ascii=False, indent=2))

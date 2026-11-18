@@ -8,19 +8,21 @@
 
 **其他 AI 工具的使用者，从这里开始：**
 
-- [下载单技能 ZIP（v1.1.0）](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.1.0.zip)：适合 Claude 上传，或解压后安装到其他工具。
+- [下载单技能 ZIP（v1.4.12）](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.4.12.zip)：适合 Claude 上传，或解压后安装到其他工具。
 - [其他 AI 工具的安装与操作流程](docs/USAGE-OTHER-AI.md)：包含 Claude、Claude Code、Cursor、Gemini CLI，以及无 Skills 入口的备用用法。
 - [下载完整仓库](https://github.com/LBuYi/high-school-math-feedback/archive/refs/heads/main.zip)：包含说明、源码和下载包。完整仓库 ZIP 多了一层目录，不要直接当作单技能包上传。
 
 在带有 `skill-installer` 的 Codex 对话中输入：
 
 ```text
-$skill-installer 请安装 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/high-school-math-feedback
+$skill-installer 请从 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/high-school-math-feedback 安装 high-school-math-feedback v1.4.12 到当前项目的 .agents/skills/，安装后检查 SKILL.md 中的版本。
 ```
 
 已有同名技能时，先备份个人修改，再让工具处理更新。如果安装后没有出现技能，重新开启对话或重启工具。安装机制可参考 [OpenAI 技能文档](https://learn.chatgpt.com/docs/build-skills)。
 
 其他工具的安装步骤已根据官方文档核对，见[操作指南](docs/USAGE-OTHER-AI.md)。尚未在这些客户端逐一完成端到端实测；导入成功后仍需检查网页访问、命令执行和文件导出能力。
+
+v1.4.12 增加了同卷多人处理和增量生成。单技能包收录通用规则、虚构示例与本地脚本。 [另一台设备安装](skills/high-school-math-feedback/references/install-on-another-device.md) · [批量处理](skills/high-school-math-feedback/references/batch-processing.md)
 
 ## 第一次使用
 
@@ -31,7 +33,7 @@ $skill-installer 请安装 https://github.com/LBuYi/high-school-math-feedback/tr
 ```text
 使用 $high-school-math-feedback，处理【材料文件夹】中【学生或班级】的【测试批次】。
 根据原题、完整作答和教师批改分析，区分已经看到的错误和仍待确认的原因。
-反馈直接写给学生，像老师平时说话，指出问题并适度督促，不套空话。
+默认写一段老师发给家长的反馈，孩子也读得懂。结合具体作答说明问题和接下来的练法。
 参考能实际读取的组卷网近期题或经典题，按学生问题设计训练，题量由训练目标决定。
 知识标题简洁，题目前提供必要的知识点和切入点；解析写全高中规范步骤。
 用 SymPy 核验适用的数学结论，必要时配数学图，并逐页检查 PDF 排版。

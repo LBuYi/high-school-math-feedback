@@ -1,0 +1,104 @@
+{
+  "fictional": true,
+  "purpose": "示意题目、作答、目标及沟通的关联；不是已部署的数据库或真实记录",
+  "students": [
+    {
+      "student_id": "S-DEMO",
+      "display_name": "虚构学生"
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "Q-DEMO-1",
+      "version": 1,
+      "stem": "求f(x)=x^2-6x+8在[0,2]上的最小值。",
+      "source": {
+        "relationship": "自编虚构例题",
+        "url": null,
+        "read_scope": "完整自编题面"
+      },
+      "answer": "0，在x=2时取得。"
+    }
+  ],
+  "attempts": [
+    {
+      "attempt_id": "A-DEMO-1",
+      "student_id": "S-DEMO",
+      "question_id": "Q-DEMO-1",
+      "question_version": 1,
+      "attempted_on": "2030-01-05",
+      "evidence": {
+        "source": "虚构说明，不对应真实文件",
+        "page": 1,
+        "observed": "配方正确，直接写顶点处的值-1，未检查x=3不在区间内"
+      },
+      "hints": "未知",
+      "review_result": "已确认此作答结论错误，根本原因待验证",
+      "answer_result": "错误",
+      "target_step_result": "缺少对称轴与区间的比较",
+      "independence_basis": null
+    }
+  ],
+  "targets": [
+    {
+      "target_id": "G-DEMO-1",
+      "evidence_attempt_ids": [
+        "A-DEMO-1"
+      ],
+      "observable_goal": "独立比较对称轴与区间，选择实际可取的最值点并说明理由",
+      "cause_hypotheses": [
+        "未理解区间限制",
+        "理解限制但本次漏查"
+      ],
+      "diagnostic_question": "要取得-1，x须等于多少，这个数在区间内吗？",
+      "current_status": "原因待验证"
+    }
+  ],
+  "practice_mapping": [
+    {
+      "paper_id": "P-DEMO-1",
+      "version": 1,
+      "number": 1,
+      "target_ids": [
+        "G-DEMO-1"
+      ],
+      "source_attempt_ids": [
+        "A-DEMO-1"
+      ],
+      "question_id": "Q-DEMO-1",
+      "role": "原题订正示例，尚无新练习题"
+    }
+  ],
+  "delivery": {
+    "generated_at": null,
+    "assigned_at": null,
+    "submitted_at": null,
+    "reviewed_at": null
+  },
+  "feedback_versions": [
+    {
+      "feedback_id": "F-DEMO-1",
+      "audience": "parent",
+      "evidence_attempt_ids": [
+        "A-DEMO-1"
+      ],
+      "status": "待拟稿，未发送",
+      "confirmed_teacher_plan": null,
+      "suggested_next_action": {
+        "question_id": "Q-DEMO-1",
+        "what_to_write": "从正确配方继续，先比较顶点横坐标与区间，再说明在哪个点取得最小值。",
+        "observable_evidence": "写出对称轴不在区间内，并依据区间内单调性选x=2。"
+      }
+    }
+  ],
+  "review_events": [],
+  "status_events": [],
+  "monthly_summary": {
+    "actual_month": "2030-01",
+    "unique_questions": 1,
+    "attempt_count": 1,
+    "confirmed_wrong_attempts": 1,
+    "overall_error_rate": null,
+    "limit": "仅有一道虚构错题，没有全部作答分母，不能算整体错误率"
+  }
+}

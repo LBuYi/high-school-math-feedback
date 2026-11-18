@@ -1,3 +1,6 @@
-# Tested baseline for exact mathematics, PDF inspection and packaging.
-sympy==1.14.0
+# Optional dependencies for the included local scripts.
+# prepare_evidence: pypdf for PDFs, Pillow for page images; Poppler is separate.
 pypdf==6.21.2
+Pillow==13.0.0
+# math_checks and the verification example.
+sympy==1.14.0

@@ -1,21 +1,56 @@
-% Copy into a trusted batch project and use with XeLaTeX.
+% XeLaTeX; copy into a trusted batch. Defaults: body 12pt / baseline 18pt.
 \documentclass[UTF8,fontset=none,12pt,a4paper]{ctexart}
-\usepackage[left=19mm,right=19mm,top=23mm,bottom=20mm,headheight=16pt,headsep=6mm]{geometry}
+\usepackage[left=20mm,right=20mm,top=24mm,bottom=20mm,headheight=15pt,headsep=7mm]{geometry}
 \usepackage{fontspec}
-\IfFontExistsTF{SimSun}{\setCJKmainfont{SimSun}[AutoFakeBold=2]}{\setCJKmainfont{FandolSong-Regular}[BoldFont=FandolSong-Bold]}
-\IfFontExistsTF{Microsoft YaHei}{\setCJKsansfont{Microsoft YaHei}}{\setCJKsansfont{FandolHei-Regular}[BoldFont=FandolHei-Bold]}
-\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{SimSun}{
+  \IfFontExistsTF{SimHei}{\setCJKmainfont{SimSun}[BoldFont=SimHei]}{\setCJKmainfont{SimSun}[AutoFakeBold=1.5]}
+}{
+  \IfFontExistsTF{Noto Serif CJK SC}{\setCJKmainfont{Noto Serif CJK SC}}{\setCJKmainfont{FandolSong-Regular}[BoldFont=FandolSong-Bold]}
+}
+\IfFontExistsTF{SimHei}{\setCJKsansfont{SimHei}[BoldFont=SimHei]}{
+  \IfFontExistsTF{Noto Sans CJK SC}{\setCJKsansfont{Noto Sans CJK SC}}{\setCJKsansfont{FandolHei-Regular}[BoldFont=FandolHei-Bold]}
+}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}\setsansfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}\setsansfont{TeX Gyre Termes}}
 \usepackage{amsmath,amssymb,array,graphicx,fancyhdr,needspace}
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\IfFontExistsTF{Cambria Math}{\setmathfont{Cambria Math}}{
+  \IfFontExistsTF{TeX Gyre Termes Math}{\setmathfont{TeX Gyre Termes Math}}{\setmathfont{Latin Modern Math}}
+}
+\usepackage{enumitem,tikz,booktabs,tabularx}
+\setlist[enumerate]{nosep,leftmargin=2em,topsep=3pt}
+\newcommand{\bodyfont}{\rmfamily\fontsize{12}{18}\selectfont}
+\AtBeginDocument{\bodyfont\setlength{\abovedisplayskip}{6pt plus 1pt minus 1pt}\setlength{\belowdisplayskip}{6pt plus 1pt minus 1pt}\setlength{\abovedisplayshortskip}{4pt}\setlength{\belowdisplayshortskip}{4pt}}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{5pt}
-\linespread{1.12}
+\setlength{\parskip}{4pt}
+\setlength{\emergencystretch}{1em}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small 理学优课高中部}
-\fancyhead[R]{\small 针对补充训练}
-\fancyfoot[C]{\small\thepage}
+\fancyhead[L]{{\rmfamily\fontsize{10.5}{13}\selectfont 理学优课高中部}}
+\fancyhead[R]{{\rmfamily\fontsize{10.5}{13}\selectfont 针对补充训练}}
+\fancyfoot[C]{{\rmfamily\fontsize{10.5}{13}\selectfont\thepage}}
 \renewcommand{\headrulewidth}{0.4pt}
-\newcommand{\doctitle}[2]{\begin{center}{\Large\sffamily\bfseries #1}\par\vspace{2mm}姓名：#2\end{center}}
-\newcommand{\parttitle}[1]{\par\Needspace{5\baselineskip}\vspace{2mm}{\large\sffamily\bfseries #1}\par}
-\newcommand{\question}[2]{\par\Needspace{4\baselineskip}\textbf{#1.}\quad #2\par}
+\newcommand{\doctitle}[2]{\begin{center}{\sffamily\bfseries\fontsize{18}{23}\selectfont #1}\par\vspace{1mm}{\bodyfont 姓名：#2}\end{center}\vspace{1mm}}
+\newcommand{\compacttitle}[1]{\begin{center}{\sffamily\bfseries\fontsize{18}{23}\selectfont #1}\end{center}}
+\newcommand{\parttitle}[1]{\par\Needspace{6\baselineskip}\vspace{2mm}{\sffamily\bfseries\fontsize{14}{19}\selectfont #1}\par\vspace{1mm}}
+\newcommand{\answerheading}[1]{\par\Needspace{6\baselineskip}{\sffamily\bfseries\fontsize{12}{18}\selectfont #1}\par}
+\newcommand{\question}[2]{\par\Needspace{5\baselineskip}\noindent\textbf{#1.}\quad #2\par}
 \newcommand{\workarea}[1]{\par\vspace*{#1}\par}
+% Keep an ordinary question and its writing area together. Split very long tasks manually.
+\newbox\handoutbox
+\newcommand{\handoutblock}[1]{%
+  \par\setbox\handoutbox=\vbox{\hsize=\linewidth #1}%
+  \ifdim\dimexpr\ht\handoutbox+\dp\handoutbox\relax>\textheight
+    \PackageError{math-handout}{Question block exceeds one page}{Split this task at a subquestion; keep body font at 12pt.}%
+  \fi
+  \Needspace{\dimexpr\ht\handoutbox+\dp\handoutbox+6pt\relax}%
+  \box\handoutbox\par
+}
+\newcommand{\questionwithspace}[3]{\handoutblock{\noindent\textbf{#1.}\quad #2\par\vspace*{#3}}}
+\newcommand{\originalquestion}[3]{\handoutblock{{\sffamily\bfseries #1}\par #2\par #3\par}}
+\newcommand{\keypoints}[1]{%
+  \par\addvspace{6pt}%
+  \handoutblock{\noindent\textbf{要点}\quad #1\par}%
+  \addvspace{6pt}%
+}
+\raggedbottom
+\newcommand{\solutionblock}[2]{\handoutblock{{\sffamily\bfseries #1}\par #2\par}}
