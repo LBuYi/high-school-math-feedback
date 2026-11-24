@@ -1,4 +1,4 @@
-"""Compile trusted XeLaTeX, inspect PDF and render all pages. Human visual review remains pending."""
+"""Compile trusted XeLaTeX or plain UTF-8 family feedback and inspect rendered PDF pages."""
 import argparse
 import json
 import re
@@ -14,6 +14,51 @@ COMPLETE_FEEDBACK_SECTIONS = {
     "training": ("原错题", "知识梳理", "方法小结", "同类练习"),
     "student_solutions": ("原错题", "知识点与错处", "原题解答", "同类练习解析", "方法回顾"),
 }
+
+TEX_TEXT_ESCAPES = str.maketrans({
+    "\\": r"\textbackslash{}",
+    "{": r"\{",
+    "}": r"\}",
+    "%": r"\%",
+    "$": r"\$",
+    "#": r"\#",
+    "_": r"\_",
+    "&": r"\&",
+    "^": r"\textasciicircum{}",
+    "~": r"\textasciitilde{}",
+    "'": r"\textquotesingle{}",
+    '"': r"\textquotedbl{}",
+    "-": "{-}",
+    "\x60": r"\textasciigrave{}",
+})
+
+
+def family_tex(body, student, header_left, header_right):
+    template = Path(__file__).resolve().parents[1] / "assets" / "preamble.tex"
+    paragraphs = re.split(r"\n[ \t]*\n", body.strip())
+    lines = [
+        template.read_text(encoding="utf-8").rstrip(),
+        r"\renewcommand{\printheaderleft}{" + header_left.translate(TEX_TEXT_ESCAPES) + "}",
+        r"\renewcommand{\printheaderright}{" + header_right.translate(TEX_TEXT_ESCAPES) + "}",
+        r"\begin{document}",
+        r"\doctitle{家长反馈}{" + student.translate(TEX_TEXT_ESCAPES) + "}",
+    ]
+    for paragraph in paragraphs:
+        if paragraph.strip():
+            lines.append(" ".join(paragraph.splitlines()).translate(TEX_TEXT_ESCAPES) + r"\par")
+    return "\n".join([*lines, r"\end{document}", ""])
+
+
+def family_text_matches(pages, body, student, header_left, header_right):
+    header = "".join((header_left + header_right).split())
+    title = "家长反馈" + "".join(student.split())
+    body_pages = []
+    for index, page in enumerate(pages, 1):
+        content = "".join(page.split()).removeprefix(header).removesuffix(str(index))
+        if index == 1:
+            content = content.removeprefix(title)
+        body_pages.append(content)
+    return "".join(body_pages) == "".join(body.split())
 
 
 def check_complete_sections(pages, kind):
@@ -108,9 +153,10 @@ def inspect_print_layout(reader, expect_a4=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("tex", type=Path)
+    parser.add_argument("source", type=Path, help="trusted .tex or UTF-8 .txt for family_feedback")
     parser.add_argument("--out-dir", required=True, type=Path)
-    parser.add_argument("--kind", required=True, choices=["training", "student_solutions", "retest", "teacher"])
+    parser.add_argument("--kind", required=True,
+                        choices=["training", "student_solutions", "retest", "teacher", "family_feedback"])
     parser.add_argument("--student", required=True)
     parser.add_argument("--expected-pages", type=int)
     parser.add_argument("--complete-feedback", action="store_true",
@@ -119,11 +165,20 @@ def main():
     parser.add_argument("--engine", default="xelatex")
     parser.add_argument("--renderer", default="pdftoppm")
     parser.add_argument("--header-left", default="理学优课高中部")
-    parser.add_argument("--header-right", default="针对补充训练")
+    parser.add_argument("--header-right")
     args = parser.parse_args()
-    tex, out = args.tex.resolve(), args.out_dir.resolve()
-    if not tex.is_file() or tex.suffix.lower() != ".tex":
-        parser.error("Input must be an existing trusted .tex file")
+    source, out = args.source.resolve(), args.out_dir.resolve()
+    is_family = args.kind == "family_feedback"
+    suffix = ".txt" if is_family else ".tex"
+    if not source.is_file() or source.suffix.lower() != suffix:
+        parser.error(f"Input must be an existing {suffix} file")
+    body = None
+    if is_family:
+        body = source.read_text(encoding="utf-8-sig")
+        if not body.strip():
+            parser.error("Family feedback text must not be empty")
+    if args.header_right is None:
+        args.header_right = "家长反馈" if is_family else "针对补充训练"
     if not args.student.strip():
         parser.error("--student must not be empty")
     if args.expected_pages is not None and args.expected_pages < 1:
@@ -132,10 +187,14 @@ def main():
         parser.error("Output directory must be empty or new; use a new version directory")
     engine, renderer = executable(args.engine), executable(args.renderer)
     out.mkdir(parents=True, exist_ok=True)
-    report = {"kind": args.kind, "student": args.student, "source": str(tex),
+    report = {"kind": args.kind, "student": args.student, "source": str(source),
               "automated_status": "failed", "visual_status": "pending", "issues": []}
     report_path = out / "pdf-check-report.json"
     try:
+        tex = source
+        if is_family:
+            tex = out / f"{source.stem}.tex"
+            tex.write_text(family_tex(body, args.student, args.header_left, args.header_right), encoding="utf-8")
         command = [engine, "-no-shell-escape", "-interaction=nonstopmode", "-halt-on-error",
                    "-file-line-error", f"-output-directory={out}", str(tex)]
         for number in (1, 2):
@@ -164,6 +223,11 @@ def main():
         compact = re.sub(r"\s+", "", text)
         if re.sub(r"\s+", "", args.student) not in compact:
             report["issues"].append("Student name not found in extracted text")
+        if is_family:
+            matches = family_text_matches(pages, body, args.student, args.header_left, args.header_right)
+            report["family_feedback_matches_source"] = matches
+            if not matches:
+                report["issues"].append("Family PDF body differs from the source TXT")
         if args.complete_feedback:
             report["issues"].extend(check_complete_sections(pages, args.kind))
         if args.kind != "teacher":

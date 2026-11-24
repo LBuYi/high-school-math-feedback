@@ -1,13 +1,6 @@
-# 学生 PDF 制作与核对
+# PDF 制作与核对
 
-训练和解析默认分别交已经打开核对过的 PDF。复测及教师答案按请求分开出。Word 按用户明确要求交付。正文的家长稿是可转发的消息。
-
-| 文件 | 内容 |
-| --- | --- |
-| 学生针对训练 PDF | 每组有完整原错题、可核对原答、知识梳理及方法小结，再排同类练习和留白。知识梳理交代概念、适用条件和需要的公式。方法小结概括本组共同的方法。练习区放题目与必要图表，按题量留空。 |
-| 学生解析 PDF | 按训练册同一科目顺序和题号组织。每组有原错题、知识点与错处、原题解答、同类练习解析、方法回顾。方法回顾用一两句写技巧和自查。 |
-| 独立复测 PDF | 按实际布置范围出新题，题面清楚，留出作图或书写空间。 |
-| 教师答案 PDF | 按需给老师解答、来源和关键作答判据。 |
+先按[输出内容与排版规范](输出内容与排版规范.md)确定文件、栏目和字体。家长反馈 PDF 用定稿 TXT 直接编译。TXT 用 UTF-8，两个自然段间空一行。
 
 ## 学生解析的答题规范
 
@@ -21,7 +14,8 @@
 ```text
 python <技能目录>/scripts/compile_pdf.py training.tex --out-dir build-training --kind training --student 示例学生 --expect-a4 --complete-feedback
 python <技能目录>/scripts/compile_pdf.py solutions.tex --out-dir build-solutions --kind student_solutions --student 示例学生 --expect-a4 --complete-feedback
+python <技能目录>/scripts/compile_pdf.py 家长反馈.txt --out-dir build-family --kind family_feedback --student 示例学生 --expect-a4
 ```
 
 3. 当前设备缺 XeLaTeX 时，可使用本机已有的 PDF 工具或导出功能。用浏览器时，将可信静态 HTML 的打印样式设为 `@page { size: A4; margin: 20mm; }`，用该浏览器能正确显示的 MathML 或公式图，将本机可用中文字体用于正文。通过“打印 → 另存为 PDF”导出，关闭浏览器自带的日期和网址页眉页脚。再按本节逐组检查公式、栏目、留白和实际页图。仍无法生成时写清具体缺项和已完成的内容。
-4. 逐页查看本次 PDF 渲染页。核对纸型、字号与字体嵌入、公式负号与上下标、图表单位、题号、题间留白及分页。完整训练册逐组核对知识梳理和方法小结有具体内容。解析对题面重新解题并查所问各项。脚本报告 `visual_status: pending`须按实际目检更新。只有题目的简版按用户本轮明确要求制作。
+4. 逐页查看本次 PDF 渲染页。核对纸型、字号与字体嵌入、公式负号与上下标、图表单位、题号、题间留白及分页。完整训练册逐组核对知识梳理和方法小结有具体内容。解析对题面重新解题并查所问各项。家长 PDF 的正文按 TXT 核对，回复使用该稿。脚本报告 `visual_status: pending`须按实际目检更新。

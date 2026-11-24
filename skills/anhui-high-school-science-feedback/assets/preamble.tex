@@ -28,14 +28,16 @@
 \setlength{\emergencystretch}{1em}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{{\rmfamily\fontsize{10.5}{13}\selectfont 理学优课高中部}}
-\fancyhead[R]{{\rmfamily\fontsize{10.5}{13}\selectfont 针对补充训练}}
+\newcommand{\printheaderleft}{理学优课高中部}
+\newcommand{\printheaderright}{针对补充训练}
+\fancyhead[L]{{\rmfamily\fontsize{10.5}{13}\selectfont \printheaderleft}}
+\fancyhead[R]{{\rmfamily\fontsize{10.5}{13}\selectfont \printheaderright}}
 \fancyfoot[C]{{\rmfamily\fontsize{10.5}{13}\selectfont\thepage}}
 \renewcommand{\headrulewidth}{0.4pt}
 \newcommand{\compacttitle}[1]{{\color{headingink}\sffamily\bfseries\fontsize{18}{23}\selectfont #1\par}}
 \newcommand{\doctitle}[2]{\compacttitle{#1}\par #2\par\vspace{2mm}}
 \newcommand{\parttitle}[1]{\par\Needspace{4\baselineskip}\addvspace{3mm}{\color{headingink}\sffamily\bfseries\fontsize{14}{19}\selectfont #1\par}\vspace{1mm}}
-\newcommand{\answerheading}[1]{\par\Needspace{3\baselineskip}\addvspace{1mm}{\color{headingink}\sffamily\bfseries #1\par}}
+\newcommand{\answerheading}[1]{\par\Needspace{3\baselineskip}\addvspace{1mm}{\color{headingink}\sffamily\bfseries\fontsize{12}{18}\selectfont #1\par}}
 \newcommand{\question}[2]{\par\Needspace{5\baselineskip}\noindent\textbf{#1.}\quad #2\par}
 \newcommand{\workarea}[1]{\par\vspace*{#1}\par}
 % Keep an ordinary question and its writing area together. Split very long tasks manually.
