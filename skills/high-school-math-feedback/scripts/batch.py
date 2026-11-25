@@ -103,7 +103,11 @@ def tex_doc(title, name, body):
 
 
 def answer_block(label, solution):
-    return r"\solutionblock{" + escape(label) + "}{解：" + solution + "}"
+    text = solution.lstrip()
+    start = re.match(r"(解|证明)[：:]\s*", text)
+    heading = start.group(1) if start else "解"
+    body = text[start.end():] if start else text
+    return r"\solutionblock{" + escape(label) + r"}{\textbf{" + heading + "：}\\par\n" + body + "}"
 
 
 def exercise_block(number, item, *, retest=False):
@@ -174,12 +178,16 @@ def student_documents(record, student, workspace):
         label = "原卷第" + original_number[1:] + "题"
         heading = r"\parttitle{" + escape(group["title"]) + "}"
         training.append(heading)
+        # The student's answer and corrections stay in the teacher evidence.
+        redo_space = group.get("redo_space", "32mm")
+        if not isinstance(redo_space, str) or not re.fullmatch(r"[1-9][0-9]?mm", redo_space):
+            raise ValueError(f"{label} 的重做留白长度无效：{redo_space}")
         training.append(
             r"\originalquestion{" + label + "}{" + original["prompt"]
-            + "}{" + student["answers"][original_number].get(
-                "student_line_tex", escape(student["answers"][original_number]["student_line"])
-            ) + "}"
+            + r"}{\workarea{" + redo_space + "}}"
         )
+        if group.get("redo_note"):
+            training.append(r"\answerheading{易错提醒}" + group["redo_note"] + r"\par")
         if group.get("keypoints"):
             training.append(r"\keypoints{" + group["keypoints"] + "}")
         solutions.extend([heading, answer_block(label, original["solution"])])

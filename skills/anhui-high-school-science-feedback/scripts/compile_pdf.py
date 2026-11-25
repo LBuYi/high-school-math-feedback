@@ -12,7 +12,7 @@ from pypdf.generic import DictionaryObject
 
 COMPLETE_FEEDBACK_SECTIONS = {
     "training": ("原错题", "知识梳理", "方法小结", "同类练习"),
-    "student_solutions": ("原错题", "知识点与错处", "原题解答", "同类练习解析", "方法回顾"),
+    "student_solutions": ("原错题", "知识点", "原题解答", "同类练习解析", "方法回顾"),
 }
 
 TEX_TEXT_ESCAPES = str.maketrans({
@@ -69,6 +69,8 @@ def check_complete_sections(pages, kind):
     for page in pages:
         for line in page.splitlines():
             heading = "".join(line.split())
+            if kind == "student_solutions" and heading == "知识点与错处":
+                heading = "知识点"
             if heading == expected[0]:
                 groups.append([heading])
             elif groups and heading in expected:
@@ -230,6 +232,11 @@ def main():
                 report["issues"].append("Family PDF body differs from the source TXT")
         if args.complete_feedback:
             report["issues"].extend(check_complete_sections(pages, args.kind))
+        if args.kind in ("training", "student_solutions"):
+            headings = {"".join(line.split()) for page in pages for line in page.splitlines()}
+            for heading in ("原答摘录", "知识点与原答", "原题可核读范围与原答"):
+                if heading in headings:
+                    report["issues"].append(f"Student PDF contains a teacher-only section: {heading}")
         if args.kind != "teacher":
             for term in ("错因假设", "题源映射", "教师核对", "AI生成", "审核记录", "SymPy"):
                 if term in compact:

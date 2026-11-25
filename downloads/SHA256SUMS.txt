@@ -1,2 +1,4 @@
 43552eac2349b0e8b471ae5dc29f0688056a376c2ee45da449121cc6d029e644  high-school-math-feedback-v1.1.0.zip
 48831a3aa46f560608f06eea0ed8330a2ec0741ce34ecf4192ec3502ac9cfc64  high-school-math-feedback-v1.4.12.zip
+b976941d4d4c3ef52417c77c18449ea92262ebba17b0d5dfd68f3772eff6abb3  anhui-high-school-science-feedback-v1.0.11.zip
+88f166a62cc8d06560985b1fe68a532876312ff005e0ce0976314a9249dc7bae  high-school-math-feedback-v1.4.16.zip

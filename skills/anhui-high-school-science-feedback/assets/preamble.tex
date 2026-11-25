@@ -39,6 +39,12 @@
 \newcommand{\parttitle}[1]{\par\Needspace{4\baselineskip}\addvspace{3mm}{\color{headingink}\sffamily\bfseries\fontsize{14}{19}\selectfont #1\par}\vspace{1mm}}
 \newcommand{\answerheading}[1]{\par\Needspace{3\baselineskip}\addvspace{1mm}{\color{headingink}\sffamily\bfseries\fontsize{12}{18}\selectfont #1\par}}
 \newcommand{\question}[2]{\par\Needspace{5\baselineskip}\noindent\textbf{#1.}\quad #2\par}
+% Number each subquestion on its own line and align any continuation lines.
+\newcommand{\subquestion}[2]{%
+  \par\Needspace{2\baselineskip}\noindent%
+  \hangindent=2em\hangafter=1%
+  \makebox[2em][l]{(#1)}#2\par%
+}
 \newcommand{\workarea}[1]{\par\vspace*{#1}\par}
 % Keep an ordinary question and its writing area together. Split very long tasks manually.
 \newbox\handoutbox
@@ -58,4 +64,9 @@
   \addvspace{6pt}%
 }
 \raggedbottom
-\newcommand{\solutionblock}[2]{\handoutblock{{\sffamily\bfseries #1}\par #2\par}}
+% The solution can flow across pages. Reserve room for each new subpart.
+\newcommand{\solutionblock}[2]{\answerheading{#1}#2\par}
+\newcommand{\solutionpart}[1]{%
+  \par\Needspace{4\baselineskip}\addvspace{5pt}%
+  \noindent\textbf{(#1)}\par\nobreak\ignorespaces%
+}

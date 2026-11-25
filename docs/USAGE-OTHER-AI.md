@@ -4,7 +4,7 @@
 
 ## 1. 下载技能
 
-点击 **[下载单技能 ZIP：high-school-math-feedback-v1.4.12.zip](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.4.12.zip)**。
+点击 **[下载单技能 ZIP：high-school-math-feedback-v1.4.16.zip](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.4.16.zip)**。
 
 如果浏览器只显示或预览文件，请使用保存/下载功能，保留 `.zip` 后缀。也可以打开[下载目录](../downloads)，选择 ZIP 后点下载原始文件。不要把网页另存为 HTML 再改成 ZIP。
 
@@ -30,7 +30,7 @@ high-school-math-feedback/
 在目标项目开一个新对话，把下面这行发给 AI。
 
 ~~~text
-$skill-installer 请从 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/high-school-math-feedback 安装 high-school-math-feedback v1.4.12 到当前项目的 .agents/skills/，安装后检查 SKILL.md 中的版本。
+$skill-installer 请从 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/high-school-math-feedback 安装 high-school-math-feedback v1.4.16 到当前项目的 .agents/skills/，安装后检查 SKILL.md 中的版本。
 ~~~
 
 手动安装时，把解压后的整个技能目录放进目标项目的 `.agents/skills/`。 [Codex 技能目录](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)
