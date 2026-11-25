@@ -1,10 +1,25 @@
-# 高中数学错题反馈与针对训练
+# 高中错题反馈与针对训练
 
-给使用 AI 工具的高中数学老师的一套技能。提供原题、学生完整作答和教师批改后，按证据整理错因，写接近老师日常说话方式的反馈，参考组卷网设计针对训练，并生成分开的学生与教师 PDF。
+这里提供合肥高中理科错题反馈和通用高中数学错题反馈两套技能。提供原题、学生完整作答和教师批改后，按证据整理错因，写接近老师日常说话方式的反馈，参考组卷网设计针对训练，并生成分开的学生与教师 PDF。
 
 本仓库包含工作流程、教师口吻样本、数学核验脚本和排版模板。它由支持技能、文件读写、Python 和网页访问的 AI 工具执行；AI 服务、组卷网账号和本机编译环境需自行准备。
 
-## 安装
+## 合肥高中理科 v1.0.6
+
+适用合肥市普通高中数学、物理、化学、生物学的错题反馈。根据本校教材与进度，制作家长反馈、学生分层训练和逐问规范解析。需要配练时先查课程项目的本地题库，缺题再核读公开题源，验收后把优质题和独立解答留在该项目。
+
+把下面这段发给另一台设备上的 Codex。
+
+```text
+$skill-installer 请从 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/anhui-high-school-science-feedback 安装 anhui-high-school-science-feedback v1.0.6。若已安装同名旧版，先将旧目录备份到技能扫描目录之外，再装新版。装好后检查 SKILL.md 的 metadata.version 为 1.0.6。
+```
+
+重新开启 Codex 对话后，使用 `$anhui-high-school-science-feedback` 处理材料。安装只下载公开技能文件。课程项目下的本地题库可另行复制。
+
+[四科技能入口](skills/anhui-high-school-science-feedback/SKILL.md) · [学生解析答题规范](skills/anhui-high-school-science-feedback/references/学生解析答题规范.md) · [本地题库维护](skills/anhui-high-school-science-feedback/references/本地题库维护.md)
+
+## 通用高中数学 v1.4.12
+
 
 **其他 AI 工具的使用者，从这里开始：**
 
