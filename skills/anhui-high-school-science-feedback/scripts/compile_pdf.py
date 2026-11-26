@@ -11,9 +11,15 @@ from pypdf.generic import DictionaryObject
 
 
 COMPLETE_FEEDBACK_SECTIONS = {
-    "training": ("原错题", "知识梳理", "方法小结", "同类练习"),
-    "student_solutions": ("原错题", "知识点", "原题解答", "同类练习解析", "方法回顾"),
+    "training": ("原错题", "同类练习"),
+    "student_solutions": ("原错题", "知识点", "原题解答", "同类练习解析", "解题技巧"),
 }
+
+TRAINING_ONLY_QUESTIONS = (
+    "知识梳理", "知识点", "方法小结", "方法回顾", "解题技巧",
+    "解题提示", "答题思路", "原题解答", "同类练习解析", "参考答案",
+)
+
 
 TEX_TEXT_ESCAPES = str.maketrans({
     "\\": r"\textbackslash{}",
@@ -66,18 +72,23 @@ def check_complete_sections(pages, kind):
     if expected is None:
         return []
     groups = []
+    tail_seen = False
+    issues = []
     for page in pages:
         for line in page.splitlines():
             heading = "".join(line.split())
-            if kind == "student_solutions" and heading == "知识点与错处":
-                heading = "知识点"
-            if heading == expected[0]:
+            if kind == "student_solutions":
+                heading = {"知识点与错处": "知识点", "方法回顾": "解题技巧"}.get(heading, heading)
+            if heading in ("综合训练", "综合训练解析"):
+                tail_seen = True
+            elif heading == expected[0]:
+                if tail_seen:
+                    issues.append(f"Complete {kind}: a practice group follows the comprehensive section")
                 groups.append([heading])
-            elif groups and heading in expected:
+            elif groups and not tail_seen and heading in expected:
                 groups[-1].append(heading)
     if not groups:
         return [f"Missing section for complete {kind}: {expected[0]}"]
-    issues = []
     for index, headings in enumerate(groups, 1):
         if tuple(headings) != expected:
             issues.append(f"Complete {kind}, group {index}: expected {', '.join(expected)}; found {', '.join(headings)}")
@@ -232,11 +243,15 @@ def main():
                 report["issues"].append("Family PDF body differs from the source TXT")
         if args.complete_feedback:
             report["issues"].extend(check_complete_sections(pages, args.kind))
-        if args.kind in ("training", "student_solutions"):
+        if args.kind in ("training", "student_solutions", "retest"):
             headings = {"".join(line.split()) for page in pages for line in page.splitlines()}
             for heading in ("原答摘录", "知识点与原答", "原题可核读范围与原答"):
                 if heading in headings:
                     report["issues"].append(f"Student PDF contains a teacher-only section: {heading}")
+            if args.kind in ("training", "retest"):
+                for heading in TRAINING_ONLY_QUESTIONS:
+                    if heading in headings:
+                        report["issues"].append(f"{args.kind} exposes a solution or method section: {heading}")
         if args.kind != "teacher":
             for term in ("错因假设", "题源映射", "教师核对", "AI生成", "审核记录", "SymPy"):
                 if term in compact:

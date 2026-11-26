@@ -4,6 +4,8 @@
 
 ## Codex
 
+通过安装器更新时，请从 [GitHub 发布页](https://github.com/LBuYi/high-school-math-feedback)下载。使用仓库 README 的安装提示词，核对实际加载的目录和版本。旧同名技能仅作备份，放到技能扫描目录之外。
+
 将整份文件夹放入目标项目的 `.agents/skills/` 文件夹。需要在此设备上的多个项目使用时，可放入用户目录的 `.agents/skills/`。Windows 用户目录通常是 `C:\Users\当前Windows用户名`，macOS 和 Linux 可从 `~/.agents/skills` 找到。新开项目对话，在消息中输入 `$high-school-math-feedback` 后说明本轮要求。项目里的学生材料由目标设备单独提供。 [Codex 技能目录](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)
 
 ## 其他 Agent

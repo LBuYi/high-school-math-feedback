@@ -139,6 +139,12 @@ def main():
             for term in ("错因假设", "题源映射", "教师核对", "AI生成", "审核记录", "SymPy"):
                 if term in compact:
                     report["issues"].append(f"Student-facing content contains internal phrase: {term}")
+        if args.kind in ("training", "retest"):
+            headings = {"".join(line.split()) for page in pages for line in page.splitlines()}
+            for heading in ("知识梳理", "知识点", "方法小结", "方法回顾", "解题技巧", "解题提示",
+                            "原题解答", "参考答案"):
+                if heading in headings:
+                    report["issues"].append(f"{args.kind} exposes a solution or method section: {heading}")
         if args.kind == "student_solutions" and "复测" in compact:
             report["issues"].append("Student training solutions mention retest; check for answer leakage")
         latex_log = (out / f"{tex.stem}.log").read_text(encoding="utf-8", errors="replace")

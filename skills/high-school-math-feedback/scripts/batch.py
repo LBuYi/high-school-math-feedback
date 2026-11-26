@@ -102,12 +102,14 @@ def tex_doc(title, name, body):
     )
 
 
-def answer_block(label, solution):
+def answer_block(label, solution, prompt=None):
     text = solution.lstrip()
     start = re.match(r"(解|证明)[：:]\s*", text)
     heading = start.group(1) if start else "解"
     body = text[start.end():] if start else text
-    return r"\solutionblock{" + escape(label) + r"}{\textbf{" + heading + "：}\\par\n" + body + "}"
+    question = (prompt + r"\par" + "\n") if prompt else ""
+    start_text = r"\textbf{" + heading + "：}" + r"\par" + "\n"
+    return r"\solutionblock{" + escape(label) + "}{" + question + start_text + body + "}"
 
 
 def exercise_block(number, item, *, retest=False):
@@ -140,7 +142,11 @@ def teacher_card(student, bank, workspace):
             number += 1
             item = bank[qid]
             lines.append(f"- 训练第{number}题 {qid}，{item['goal']}。{item['source']}。")
-    for number, qid in enumerate(student["retest"], 1):
+    for qid in student.get("comprehensive", []):
+        number += 1
+        item = bank[qid]
+        lines.append(f"- 卷尾综合第{number}题 {qid}，{item['goal']}。{item['source']}。")
+    for number, qid in enumerate(student.get("retest", []), 1):
         item = bank[qid]
         lines.append(f"- 复测第{number}题 {qid}，{item['goal']}。{item['source']}。")
     if student.get("retest_attempts"):
@@ -172,12 +178,12 @@ def student_documents(record, student, workspace):
     questions, bank = record["exam"]["items"], record["bank"]
     training, solutions = [], []
     number = 0
-    for group in student["groups"]:
+    for group_number, group in enumerate(student["groups"], 1):
         original_number = group["original"]
         original = questions[original_number]
         label = "原卷第" + original_number[1:] + "题"
-        heading = r"\parttitle{" + escape(group["title"]) + "}"
-        training.append(heading)
+        training.append(r"\parttitle{第" + str(group_number) + "组}")
+        solutions.append(r"\parttitle{" + escape(group["title"]) + "}")
         # The student's answer and corrections stay in the teacher evidence.
         redo_space = group.get("redo_space", "32mm")
         if not isinstance(redo_space, str) or not re.fullmatch(r"[1-9][0-9]?mm", redo_space):
@@ -189,24 +195,36 @@ def student_documents(record, student, workspace):
         if group.get("redo_note"):
             training.append(r"\answerheading{易错提醒}" + group["redo_note"] + r"\par")
         if group.get("keypoints"):
-            training.append(r"\keypoints{" + group["keypoints"] + "}")
-        solutions.extend([heading, answer_block(label, original["solution"])])
+            solutions.append(r"\answerheading{知识点}" + group["keypoints"] + r"\par")
+        solutions.append(answer_block(label, original["solution"], original["prompt"]))
         for qid in group["practice"]:
             number += 1
             item = bank[qid]
             training.append(exercise_block(number, item))
-            solutions.append(answer_block(f"练习第{number}题", item["solution"]))
-    retest = [r"请独立完成，保留必要过程。"]
-    retest_answers = [r"\clearpage", r"\parttitle{独立复测答案}"]
-    for number, qid in enumerate(student["retest"], 1):
-        item = bank[qid]
-        retest.append(exercise_block(number, item, retest=True))
-        retest_answers.append(answer_block(f"第{number}题", item["solution"]))
-    bodies = {
-        "training": training, "student_solutions": solutions, "retest": retest,
-        "teacher": solutions + retest_answers,
-    }
-    docs = {kind: tex_doc(title, student["name"], bodies[kind]) for kind, title in PDF_ROLES.items()}
+            solutions.append(answer_block(f"练习第{number}题", item["solution"], item["prompt"]))
+        if group.get("techniques"):
+            solutions.append(r"\answerheading{解题技巧}" + group["techniques"] + r"\par")
+    if student.get("comprehensive"):
+        training.append(r"\parttitle{综合训练}")
+        solutions.append(r"\parttitle{综合训练解析}")
+        for qid in student["comprehensive"]:
+            number += 1
+            item = bank[qid]
+            training.append(exercise_block(number, item))
+            solutions.append(answer_block(f"综合训练第{number}题", item["solution"], item["prompt"]))
+    bodies = {"training": training, "student_solutions": solutions, "teacher": solutions}
+    if student.get("retest"):
+        retest = [r"请独立完成，保留必要过程。"]
+        retest_answers = [r"\clearpage", r"\parttitle{独立复测答案}"]
+        for number, qid in enumerate(student["retest"], 1):
+            item = bank[qid]
+            retest.append(exercise_block(number, item, retest=True))
+            retest_answers.append(answer_block(f"第{number}题", item["solution"], item["prompt"]))
+        bodies["retest"] = retest
+        bodies["teacher"] = solutions + retest_answers
+    titles = {"training": "高中数学错题针对训练", "student_solutions": "高中数学错题解析"}
+    docs = {kind: tex_doc(titles.get(kind, PDF_ROLES[kind]), student["name"], body)
+            for kind, body in bodies.items()}
     docs["feedback"] = student["feedback"].strip() + "\n"
     docs["card"] = teacher_card(student, bank, workspace)
     return docs
@@ -246,8 +264,8 @@ def collect(record, workspace):
             source_file(workspace, item)
             if item["status"] == "待核对":
                 pending.append({"student": sid, "reason": item["note"]})
-        if not student["answers"] or not student["groups"] or not student["retest"] or not student["feedback"].strip():
-            raise ValueError(f"{sid} 缺已核对作答、练习、复测或家长反馈")
+        if not student["answers"] or not student["groups"] or not student["feedback"].strip():
+            raise ValueError(f"{sid} 缺已核对作答、练习或家长反馈")
         if set(student["answers"]) - set(exam["items"]):
             raise ValueError(f"{sid} 的作答含未登记的原卷题号")
         training_ids = []
@@ -255,9 +273,11 @@ def collect(record, workspace):
             if group["original"] not in student["answers"] or not group["practice"]:
                 raise ValueError(f"{sid} 的某组练习缺原答或练习题")
             training_ids.extend(group["practice"])
-        ids = training_ids + student["retest"]
+            if not all(group.get(key, "").strip() for key in ("keypoints", "techniques")):
+                pending.append({"student": sid, "reason": f"原卷 {group['original']} 的知识点或解题技巧待补，成品待核对"})
+        ids = training_ids + student.get("comprehensive", []) + student.get("retest", [])
         if len(ids) != len(set(ids)) or any(
-            bank[qid].get("checked_content_sha256") != content_sha(bank[qid]) for qid in ids
+            qid not in bank or bank[qid].get("checked_content_sha256") != content_sha(bank[qid]) for qid in ids
         ):
             raise ValueError(f"{sid} 练习与复测有重复或尚无验题记录")
         for attempt in student.get("retest_attempts", []):
@@ -308,7 +328,7 @@ def prepare(record, out, skill, workspace, engine, renderer):
     compiler = skill / "scripts/compile_pdf.py"
     pdf_version = sha((preamble + file_sha(compiler) + engine + renderer).encode("utf-8"))
     changes, reused = {}, {}
-    retest_questions = {student["id"]: student["retest"] for student in record["students"]}
+    retest_questions = {student["id"]: student.get("retest", []) for student in record["students"]}
     for key, job in jobs.items():
         name, kind, body = job
         old = previous.get("files", {}).get(key)

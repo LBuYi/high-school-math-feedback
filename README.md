@@ -4,42 +4,43 @@
 
 本仓库包含工作流程、教师口吻样本、数学核验脚本和排版模板。它由支持技能、文件读写、Python 和网页访问的 AI 工具执行；AI 服务、组卷网账号和本机编译环境需自行准备。
 
-## 合肥高中理科 v1.0.11
-
-适用合肥市普通高中数学、物理、化学、生物学的错题反馈。根据本校教材与进度，制作家长反馈、学生分层训练和逐问规范解析。需要配练时先查课程项目的本地题库，再自行打开组卷网核读需补的题。独立验题后把优质题留在课程项目。
+## 在另一台 Codex 安装或更新
 
 把下面这段发给另一台设备上的 Codex。
 
-```text
-$skill-installer 请从 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/anhui-high-school-science-feedback 安装 anhui-high-school-science-feedback v1.0.11。若已安装同名旧版，先将旧目录备份到技能扫描目录之外，再装新版。装好后检查 SKILL.md 的 metadata.version 为 1.0.11。
-```
+~~~text
+$skill-installer 请用安装器从 LBuYi/high-school-math-feedback 的 main 分支安装两个技能。
+路径是 skills/anhui-high-school-science-feedback 和 skills/high-school-math-feedback。
+如果已安装同名旧版，只备份这两个旧技能目录到技能扫描范围之外，再安装。不要改动其他技能。
+确认 SKILL.md 的 metadata.version 分别是 1.0.12 和 1.4.17，并报告安装路径。
+~~~
 
-重新开启 Codex 对话后，使用 `$anhui-high-school-science-feedback` 处理材料。安装只下载公开技能文件。课程项目下的本地题库可另行复制。
+安装后新开会话。合肥数学、物理、化学、生物学（含单科）使用 $anhui-high-school-science-feedback，其他高中数学可用 $high-school-math-feedback。
 
-[四科技能入口](skills/anhui-high-school-science-feedback/SKILL.md) · [学生解析答题规范](skills/anhui-high-school-science-feedback/references/学生解析答题规范.md) · [本地题库维护](skills/anhui-high-school-science-feedback/references/本地题库维护.md) · [解析配图](skills/anhui-high-school-science-feedback/references/solution-visuals.md)
+## 合肥高中理科 v1.0.12
 
-[下载四科单技能 ZIP（v1.0.11）](downloads/anhui-high-school-science-feedback-v1.0.11.zip)
+适用合肥市普通高中数学、物理、化学、生物学的错题反馈。根据本校教材与进度，制作家长反馈、学生分层训练和逐问规范解析。需要配练时先查课程项目的本地题库，再自行打开组卷网核读需补的题。独立验题后把优质题留在课程项目。
 
-## 通用高中数学 v1.4.16
+原错题后紧跟对应练习，卷尾综合按需设置。先独立验题，再审是否确实对应失分步骤。训练少提示，解析逐问写清，组末分点总结解题技巧。合肥家长稿正文、TXT 和 PDF 同文，学生训练、解析按原卷分册。复测另用未见的新题。
+
+[四科技能入口](skills/anhui-high-school-science-feedback/SKILL.md) · [完整四科 SOP](skills/anhui-high-school-science-feedback/references/hefei-feedback-sop.md) · [学生解析答题规范](skills/anhui-high-school-science-feedback/references/学生解析答题规范.md) · [本地题库维护](skills/anhui-high-school-science-feedback/references/本地题库维护.md) · [解析配图](skills/anhui-high-school-science-feedback/references/solution-visuals.md)
+
+[下载四科单技能 ZIP（v1.0.12）](downloads/anhui-high-school-science-feedback-v1.0.12.zip)
+
+## 通用高中数学 v1.4.17
 
 
 **其他 AI 工具的使用者，从这里开始：**
 
-- [下载单技能 ZIP（v1.4.16）](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.4.16.zip)：适合 Claude 上传，或解压后安装到其他工具。
+- [下载单技能 ZIP（v1.4.17）](https://raw.githubusercontent.com/LBuYi/high-school-math-feedback/main/downloads/high-school-math-feedback-v1.4.17.zip)：适合 Claude 上传，或解压后安装到其他工具。
 - [其他 AI 工具的安装与操作流程](docs/USAGE-OTHER-AI.md)：包含 Claude、Claude Code、Cursor、Gemini CLI，以及无 Skills 入口的备用用法。
 - [下载完整仓库](https://github.com/LBuYi/high-school-math-feedback/archive/refs/heads/main.zip)：包含说明、源码和下载包。完整仓库 ZIP 多了一层目录，不要直接当作单技能包上传。
 
-在带有 `skill-installer` 的 Codex 对话中输入：
-
-```text
-$skill-installer 请从 https://github.com/LBuYi/high-school-math-feedback/tree/main/skills/high-school-math-feedback 安装 high-school-math-feedback v1.4.16 到当前项目的 .agents/skills/，安装后检查 SKILL.md 中的版本。
-```
-
-已有同名技能时，先备份个人修改，再让工具处理更新。如果安装后没有出现技能，重新开启对话或重启工具。安装机制可参考 [OpenAI 技能文档](https://learn.chatgpt.com/docs/build-skills)。
+Codex 安装使用上面的两技能安装提示，也可只安装通用数学路径。
 
 其他工具的安装步骤已根据官方文档核对，见[操作指南](docs/USAGE-OTHER-AI.md)。尚未在这些客户端逐一完成端到端实测；导入成功后仍需检查网页访问、命令执行和文件导出能力。
 
-v1.4.16 支持原错题重做、整题统一答题区和逐问分行解析。按所考的区间、端点或分类配数学图象，正文仍写全推导。单技能包含虚构示例与本地脚本。 [另一台设备安装](skills/high-school-math-feedback/references/install-on-another-device.md) · [批量处理](skills/high-school-math-feedback/references/batch-processing.md)
+v1.4.17 支持原错题与练习同组、整题统一答题区、可选卷尾综合和逐问分行解析。批量脚本将知识点和技巧放在解析册，不在训练页提前出现。按所考的区间、端点或分类配数学图象，正文仍写全推导。单技能包含虚构示例与本地脚本。 [另一台设备安装](skills/high-school-math-feedback/references/install-on-another-device.md) · [批量处理](skills/high-school-math-feedback/references/batch-processing.md)
 
 ## 第一次使用
 
@@ -52,7 +53,7 @@ v1.4.16 支持原错题重做、整题统一答题区和逐问分行解析。按
 根据原题、完整作答和教师批改分析，区分已经看到的错误和仍待确认的原因。
 默认写一段老师发给家长的反馈，孩子也读得懂。结合具体作答说明问题和接下来的练法。
 参考能实际读取的组卷网近期题或经典题，按学生问题设计训练，题量由训练目标决定。
-知识标题简洁。题面的小问顺序分行，整题统一留白。解析写全高中规范步骤，配图时在对应步骤引用图上的信息。
+原错题后接对应练习，综合题按需放卷尾。小问顺序分行，整题统一留白，不先给解题提示。解析写全高中规范步骤，配图时引用图上信息，各组末分点写解题技巧。
 用 SymPy 核验适用的数学结论，必要时配数学图，并逐页检查 PDF 排版。
 分别输出反馈 TXT、学生训练 PDF、学生解析 PDF、独立复测 PDF、教师答案与核对卡。
 页眉左侧为【学校或机构名称】，右侧为【针对补充训练】。
@@ -78,8 +79,8 @@ v1.4.16 支持原错题重做、整题统一答题区和逐问分行解析。按
 | 文件 | 内容与使用时机 |
 | --- | --- |
 | 反馈 TXT | 问题、具体例子、课下做法和必要的提醒，可直接复制 |
-| 学生训练 PDF | 必要知识、方法切入点、针对题目和作答空间 |
-| 学生解析 PDF | 与训练编号对应的完整规范解答，独立尝试后提供 |
+| 学生训练 PDF | 原错题重做、对应练习、按需卷尾综合和整题留白 |
+| 学生解析 PDF | 与训练对应的题目、知识点、逐问解答和组末技巧，尝试后提供 |
 | 独立复测 PDF | 不带提示的新题，用于核对是否能独立完成 |
 | 教师答案与核对卡 | 训练和复测答案、证据、疑点及关键检查步骤 |
 
